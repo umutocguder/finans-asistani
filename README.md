@@ -7,7 +7,7 @@
   [![Build Passing](https://img.shields.io/badge/Build-Passing-emerald?style=flat-square&logo=github-actions)](https://github.com/umutocguder/finans-asistani)
   [![Tests 100%](https://img.shields.io/badge/Tests-100%25_Passing-blue?style=flat-square&logo=node.js)](https://github.com/umutocguder/finans-asistani)
   [![License](https://img.shields.io/badge/License-11Hopem_Proprietary-amber?style=flat-square)](https://11hopem.com)
-  [![Vercel Live](https://img.shields.io/badge/Vercel-finans--asistani.vercel.app-black?style=flat-square&logo=vercel)](https://finans-asistani.vercel.app)
+  [![Vercel Live](https://img.shields.io/badge/Vercel-finans--asistani--ebon.vercel.app-black?style=flat-square&logo=vercel)](https://finans-asistani-ebon.vercel.app)
 </div>
 
 ---
@@ -23,7 +23,7 @@ Platform, Türkiye'nin yüksek enflasyon ve yüksek faiz ortamındaki finansal d
 ---
 
 ## 🌐 2. Canlı Bağlantılar ve Proje Künyesi
-- **Canlı Web Platformu:** [https://finans-asistani.vercel.app](https://finans-asistani.vercel.app)
+- **Canlı Web Platformu:** [https://finans-asistani-ebon.vercel.app](https://finans-asistani-ebon.vercel.app)
 - **Özel GitHub Deposu:** [https://github.com/umutocguder/finans-asistani](https://github.com/umutocguder/finans-asistani)
 - **Marka & Telif Sahibi:** [11Hopem](https://11hopem.com)
 - **Geliştirici İletişim:** `umutocgdr@gmail.com`

@@ -4,7 +4,7 @@
 - **Name:** `finans-asistani` (11Hopem Finansör)
 - **Scope:** Personal finance management, intelligent debt payoff strategies (Avalanche and Snowball methods), credit loan timing and eligibility advisor, cashflow modeling, and asset diversification engine.
 - **Brand Identity:** Exclusively `11Hopem` with redirect to `https://11hopem.com`.
-- **Live URL:** `https://finans-asistani.vercel.app`
+- **Live URL:** `https://finans-asistani-ebon.vercel.app`
 - **GitHub Repository:** Private repo `umutocguder/finans-asistani`
 - **Antigravity Project ID:** `7de8582d-e3a4-481b-81aa-13ced53a98f1`
 
