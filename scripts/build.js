@@ -43,4 +43,9 @@ for (const fav of ['favicon.ico', 'favicon.svg', 'apple-touch-icon.png', 'og-ima
   }
 }
 
+// Keep root index.html synchronized with public/index.html
+if (fs.existsSync(path.join(PUBLIC_DIR, 'index.html'))) {
+  fs.copyFileSync(path.join(PUBLIC_DIR, 'index.html'), path.join(ROOT_DIR, 'index.html'));
+}
+
 console.log('[Build] Build complete! Public directory is production-ready.');

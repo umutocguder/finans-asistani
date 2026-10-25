@@ -16,7 +16,9 @@
   - `loanAdvisorEngine.js`: Debt-to-Income (DTI) and loan borrowing timing decision rules.
   - `investmentEngine.js`: Toxic debt vs investment returns, asset allocation models.
   - `financeAdvisorEngine.js`: High-level AI advisor answering direct financial questions.
-- **Data Custody & Security:**
+- **Data Custody, Backend & Security:**
+  - `supabase/schema.sql`: PostgreSQL relational persistence (`financial_profiles`, `debts`, `debt_payoff_simulations`, `financial_advisor_queries`) with Row Level Security (RLS).
+  - `src/services/supabaseService.js`: Direct PostgREST client eliminating browser localStorage for persistent financial data (Rule: veri-localstorage-yasagi).
   - `src/services/backupService.js`: Rotating local SHA-256 cryptographic backups in `data/backups/`.
   - `src/telemetry/telemetryService.js`: Non-blocking Firebase telemetry with 100% financial PII stripping.
 - **Frontend Vitrine:** Vanilla HTML5, Tailwind CSS CDN, Lucide Icons, Glassmorphism UI in `public/index.html`.

@@ -92,12 +92,16 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-3">
-        <div class="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-dark-800 border border-white/10 text-xs text-slate-300">
-          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-400"></i> %100 Yerel Kasa & Şifreli Veri
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div id="supabaseStatusBadge" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300">
+          <span id="supabasePulse" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="supabaseStatusText" class="font-medium">Supabase Bağlanıyor...</span>
         </div>
-        <button onclick="exportBackupData()" class="px-3 py-1.5 rounded-lg border border-white/15 hover:border-brand-500/40 text-xs text-slate-300 hover:text-white transition flex items-center gap-1.5">
-          <i data-lucide="download" class="w-3.5 h-3.5 text-brand-400"></i> Yedek İndir
+        <button onclick="openSupabaseSettingsModal()" title="Supabase Ayarları" class="p-1.5 rounded-lg border border-white/10 hover:border-brand-500/40 text-slate-400 hover:text-white transition flex items-center justify-center">
+          <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i>
+        </button>
+        <button onclick="exportBackupData()" class="hidden sm:flex px-3 py-1.5 rounded-lg border border-white/15 hover:border-brand-500/40 text-xs text-slate-300 hover:text-white transition items-center gap-1.5">
+          <i data-lucide="download" class="w-3.5 h-3.5 text-brand-400"></i> Dışa Aktar
         </button>
         <a href="https://11hopem.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-brand-600 to-cyan-500 hover:opacity-95 text-xs font-semibold text-white shadow-md shadow-brand-500/20 transition">
           11Hopem <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
@@ -544,6 +548,43 @@
     </div>
   </div>
 
+  <!-- Supabase Settings Modal -->
+  <div id="supabaseModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full p-6 rounded-2xl relative border border-white/15">
+      <button onclick="closeSupabaseSettingsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+          <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i>
+        </div>
+        <div>
+          <h4 class="font-bold text-white text-base">Supabase PostgreSQL Bağlantısı</h4>
+          <p class="text-[11px] text-slate-400">Kalıcı veri depolama katmanı (Kural: localStorage yasağı)</p>
+        </div>
+      </div>
+      <div class="space-y-3.5 text-xs">
+        <div>
+          <label class="block text-slate-300 mb-1 font-semibold">Supabase REST URL</label>
+          <input type="text" id="supabaseUrlInput" class="w-full px-3 py-2 bg-dark-900 border border-white/10 rounded-xl font-mono text-white focus:border-brand-500 text-xs" />
+        </div>
+        <div>
+          <label class="block text-slate-300 mb-1 font-semibold">Supabase Anon Key</label>
+          <input type="password" id="supabaseKeyInput" class="w-full px-3 py-2 bg-dark-900 border border-white/10 rounded-xl font-mono text-white focus:border-brand-500 text-xs" />
+        </div>
+        <div class="p-3 rounded-xl bg-dark-950 border border-white/5 text-[11px] text-slate-400 leading-relaxed">
+          <span class="text-emerald-400 font-semibold">✓ PostgreSQL RLS Korumalı:</span> Borçlar, gelir/giderler ve simülasyonlar doğrudan Supabase PostgreSQL tablolarında (<code class="text-white">financial_profiles</code>, <code class="text-white">debts</code>) saklanır.
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="closeSupabaseSettingsModal()" class="px-4 py-2 rounded-xl text-slate-300 hover:text-white glass text-xs font-semibold">Kapat</button>
+          <button type="button" onclick="saveSupabaseSettings()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i> Kaydet & Yeniden Bağlan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="border-t border-white/10 bg-dark-900 py-8 text-xs text-slate-400 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -556,41 +597,140 @@
     </div>
   </footer>
 
+  <!-- Notification Toast -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none px-4 py-3 rounded-xl bg-emerald-600/90 border border-emerald-400 text-white text-xs font-semibold shadow-xl flex items-center gap-2">
+    <i data-lucide="check-circle" class="w-4 h-4"></i>
+    <span id="toastMessage">İşlem başarılı</span>
+  </div>
+
   <!-- Application Logic (ES Modules) -->
   <script type="module">
     import { DebtEngine } from './src/engines/debtEngine.js';
     import { LoanAdvisorEngine } from './src/engines/loanAdvisorEngine.js';
     import { InvestmentEngine } from './src/engines/investmentEngine.js';
     import { FinanceAdvisorEngine } from './src/engines/financeAdvisorEngine.js';
+    import { SupabaseService } from './src/services/supabaseService.js';
 
-    // State
+    // Supabase Persistence Config (URL/Key credentials only, zero financial data in browser storage)
+    const customUrl = localStorage.getItem('11hopem_supabase_url');
+    const customKey = localStorage.getItem('11hopem_supabase_key');
+
+    let supabase = new SupabaseService({
+      url: customUrl || undefined,
+      key: customKey || undefined
+    });
+
+    // In-memory runtime state (strictly synchronized with Supabase PostgreSQL)
     let profile = {
+      userId: 'umut',
       monthlyNetIncome: 90000,
       monthlyFixedExpenses: 35000,
       emergencyFund: 40000,
       riskTolerance: 'BALANCED',
-      debts: [
-        { id: '1', name: 'Kredi Kartı A', type: 'credit_card', balance: 30000, minPayment: 6000, interestRateMonthly: 4.5 },
-        { id: '2', name: 'İhtiyaç Kredisi', type: 'consumer_loan', balance: 80000, minPayment: 5500, interestRateMonthly: 3.1 },
-        { id: '3', name: 'KMH / Ek Hesap', type: 'kmh', balance: 15000, minPayment: 15000, interestRateMonthly: 5.0 }
-      ]
+      debts: []
     };
 
-    // Load from local storage if available
-    const saved = localStorage.getItem('11hopem_finansor_state');
-    if (saved) {
-      try { profile = JSON.parse(saved); } catch(e) {}
+    function showNotification(msg) {
+      const toast = document.getElementById('toastNotification');
+      const text = document.getElementById('toastMessage');
+      if (!toast || !text) return;
+      text.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2800);
     }
 
-    function saveState() {
-      localStorage.setItem('11hopem_finansor_state', JSON.stringify(profile));
+    function setSupabaseStatus(state, message) {
+      const badge = document.getElementById('supabaseStatusBadge');
+      const pulse = document.getElementById('supabasePulse');
+      const text = document.getElementById('supabaseStatusText');
+      if (!badge || !text) return;
+      text.textContent = message;
+
+      if (state === 'CONNECTED') {
+        badge.className = 'flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300';
+        pulse.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+      } else if (state === 'CONNECTING') {
+        badge.className = 'flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-300';
+        pulse.className = 'w-2 h-2 rounded-full bg-cyan-400 animate-ping';
+      } else {
+        badge.className = 'flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-xs text-red-300';
+        pulse.className = 'w-2 h-2 rounded-full bg-red-400';
+      }
     }
 
-    // Refresh everything
+    async function loadSupabaseData() {
+      setSupabaseStatus('CONNECTING', 'Supabase Bağlanıyor...');
+      try {
+        // 1. Fetch Profile
+        const remoteProfile = await supabase.getProfile('umut');
+        if (remoteProfile) {
+          profile.monthlyNetIncome = Number(remoteProfile.monthly_net_income || 90000);
+          profile.monthlyFixedExpenses = Number(remoteProfile.monthly_fixed_expenses || 35000);
+          profile.emergencyFund = Number(remoteProfile.emergency_fund || 40000);
+          profile.riskTolerance = remoteProfile.risk_tolerance || 'BALANCED';
+        } else {
+          // Initialize profile in Supabase
+          await supabase.saveProfile(profile);
+        }
+
+        // 2. Fetch Debts
+        const remoteDebts = await supabase.getDebts('umut');
+        if (Array.isArray(remoteDebts) && remoteDebts.length > 0) {
+          profile.debts = remoteDebts.map(d => ({
+            id: d.id,
+            name: d.name,
+            type: (d.debt_type || 'CREDIT_CARD').toLowerCase().replace('overdraft_kmh', 'kmh'),
+            debtType: d.debt_type,
+            balance: Number(d.balance),
+            minPayment: Number(d.min_payment),
+            interestRateMonthly: Number(d.interest_rate_monthly)
+          }));
+        } else if (!remoteProfile) {
+          // Seed default template debts into Supabase for initial setup
+          const defaultDebts = [
+            { name: 'Kredi Kartı A', debtType: 'CREDIT_CARD', balance: 30000, minPayment: 6000, interestRateMonthly: 4.5 },
+            { name: 'İhtiyaç Kredisi', debtType: 'CONSUMER_LOAN', balance: 80000, minPayment: 5500, interestRateMonthly: 3.1 },
+            { name: 'KMH / Ek Hesap', debtType: 'OVERDRAFT_KMH', balance: 15000, minPayment: 15000, interestRateMonthly: 5.0 }
+          ];
+          profile.debts = [];
+          for (const item of defaultDebts) {
+            const created = await supabase.createDebt({ ...item, userId: 'umut' });
+            profile.debts.push({
+              id: created.id,
+              name: created.name,
+              type: created.debt_type.toLowerCase().replace('overdraft_kmh', 'kmh'),
+              debtType: created.debt_type,
+              balance: Number(created.balance),
+              minPayment: Number(created.min_payment),
+              interestRateMonthly: Number(created.interest_rate_monthly)
+            });
+          }
+        } else {
+          profile.debts = [];
+        }
+
+        // Sync input values
+        document.getElementById('inputNetIncome').value = profile.monthlyNetIncome;
+        document.getElementById('inputFixedExpenses').value = profile.monthlyFixedExpenses;
+        document.getElementById('inputEmergencyFund').value = profile.emergencyFund;
+        document.getElementById('selectRiskProfile').value = profile.riskTolerance;
+
+        setSupabaseStatus('CONNECTED', 'Supabase PostgreSQL Bağlı');
+        window.refreshDashboard();
+      } catch (err) {
+        console.error('[Supabase Load Error]', err);
+        setSupabaseStatus('ERROR', 'Supabase Bağlantı Hatası');
+        alert(`⚠️ Supabase PostgreSQL Bağlantı Uyarısı:\n${err.message}\n\nLütfen sağ üstteki veritabanı simgesinden bağlantı ayarlarını kontrol edin.`);
+        window.refreshDashboard();
+      }
+    }
+
+    // Refresh Dashboard Views and Metrics
     window.refreshDashboard = function() {
-      saveState();
       const report = FinanceAdvisorEngine.generateFinancialHealthReport(profile);
-      const { summary, strategies, investmentRecommendation, actionPlan } = report;
+      const { summary, strategies, investmentRecommendation } = report;
 
       // KPIs
       document.getElementById('kpiNetIncome').textContent = formatMoney(summary.monthlyNetIncome);
@@ -650,7 +790,7 @@
         return;
       }
 
-      tbody.innerHTML = profile.debts.map((d, index) => {
+      tbody.innerHTML = profile.debts.map((d) => {
         const annualRate = Math.round(Number(d.interestRateMonthly) * 12 * 1.35 * 10) / 10;
         const typeLabels = {
           credit_card: 'Kredi Kartı',
@@ -668,7 +808,7 @@
             <td class="p-3 font-mono text-amber-400 font-semibold">%${d.interestRateMonthly}</td>
             <td class="p-3 font-mono text-slate-400">~%${annualRate}</td>
             <td class="p-3 text-right">
-              <button onclick="deleteDebt(${index})" class="text-red-400 hover:text-red-300 p-1 rounded transition">
+              <button onclick="deleteDebt('${d.id}')" class="text-red-400 hover:text-red-300 p-1 rounded transition" title="Borcu Sil">
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
               </button>
             </td>
@@ -723,11 +863,13 @@
       window.submitAdvisorQuestion();
     };
 
-    window.submitAdvisorQuestion = function() {
+    window.submitAdvisorQuestion = async function() {
       const q = document.getElementById('advisorInput').value;
       if (!q) return;
       const ans = FinanceAdvisorEngine.answerUserQuery(q, profile);
       renderAdvisorAdvice(ans);
+      // Log to Supabase PostgreSQL
+      await supabase.recordAdvisorQuery(q, ans);
     };
 
     window.runLoanTimingTest = function() {
@@ -759,21 +901,42 @@
       `).join('');
     };
 
-    window.updateProfileData = function() {
+    window.updateProfileData = async function() {
       profile.monthlyNetIncome = Number(document.getElementById('inputNetIncome').value || 0);
       profile.monthlyFixedExpenses = Number(document.getElementById('inputFixedExpenses').value || 0);
       profile.emergencyFund = Number(document.getElementById('inputEmergencyFund').value || 0);
       window.refreshDashboard();
+
+      try {
+        await supabase.saveProfile(profile);
+        showNotification('✓ Profil Supabase PostgreSQL veritabanına kaydedildi');
+      } catch (err) {
+        alert(`Supabase kayıt hatası: ${err.message}`);
+      }
     };
 
-    window.updateInvestmentAllocations = function() {
+    window.updateInvestmentAllocations = async function() {
       profile.riskTolerance = document.getElementById('selectRiskProfile').value;
       window.refreshDashboard();
+
+      try {
+        await supabase.saveProfile(profile);
+        showNotification('✓ Risk profili Supabase PostgreSQL veritabanına kaydedildi');
+      } catch (err) {
+        alert(`Supabase kayıt hatası: ${err.message}`);
+      }
     };
 
-    window.deleteDebt = function(index) {
-      profile.debts.splice(index, 1);
-      window.refreshDashboard();
+    window.deleteDebt = async function(id) {
+      if (!confirm('Bu borcu kalıcı olarak silmek istediğinizden emin misiniz?')) return;
+      try {
+        await supabase.deleteDebt(id);
+        profile.debts = profile.debts.filter(d => d.id !== id);
+        window.refreshDashboard();
+        showNotification('✓ Borç Supabase veritabanından silindi');
+      } catch (err) {
+        alert(`Supabase borç silme hatası: ${err.message}`);
+      }
     };
 
     window.openAddDebtModal = function() {
@@ -784,7 +947,7 @@
       document.getElementById('addDebtModal').classList.add('hidden');
     };
 
-    window.saveNewDebt = function() {
+    window.saveNewDebt = async function() {
       const name = document.getElementById('newDebtName').value;
       const type = document.getElementById('newDebtType').value;
       const balance = Number(document.getElementById('newDebtBalance').value || 0);
@@ -796,20 +959,68 @@
         return;
       }
 
-      profile.debts.push({
-        id: String(Date.now()),
-        name,
-        type,
-        balance,
-        minPayment,
-        interestRateMonthly: rate
-      });
+      const typeMapping = {
+        credit_card: 'CREDIT_CARD',
+        kmh: 'OVERDRAFT_KMH',
+        consumer_loan: 'CONSUMER_LOAN',
+        personal: 'PERSONAL_LOAN'
+      };
 
-      window.closeAddDebtModal();
-      document.getElementById('newDebtName').value = '';
-      document.getElementById('newDebtBalance').value = '';
-      document.getElementById('newDebtMinPayment').value = '';
-      window.refreshDashboard();
+      try {
+        const created = await supabase.createDebt({
+          userId: 'umut',
+          name,
+          debtType: typeMapping[type] || 'OTHER',
+          balance,
+          minPayment,
+          interestRateMonthly: rate
+        });
+
+        profile.debts.push({
+          id: created.id,
+          name: created.name,
+          type,
+          debtType: created.debt_type,
+          balance: Number(created.balance),
+          minPayment: Number(created.min_payment),
+          interestRateMonthly: Number(created.interest_rate_monthly)
+        });
+
+        window.closeAddDebtModal();
+        document.getElementById('newDebtName').value = '';
+        document.getElementById('newDebtBalance').value = '';
+        document.getElementById('newDebtMinPayment').value = '';
+        window.refreshDashboard();
+        showNotification('✓ Yeni borç Supabase PostgreSQL veritabanına eklendi');
+      } catch (err) {
+        alert(`Supabase borç kayıt hatası: ${err.message}`);
+      }
+    };
+
+    window.openSupabaseSettingsModal = function() {
+      document.getElementById('supabaseUrlInput').value = supabase.url;
+      document.getElementById('supabaseKeyInput').value = supabase.key;
+      document.getElementById('supabaseModal').classList.remove('hidden');
+      lucide.createIcons();
+    };
+
+    window.closeSupabaseSettingsModal = function() {
+      document.getElementById('supabaseModal').classList.add('hidden');
+    };
+
+    window.saveSupabaseSettings = function() {
+      const newUrl = document.getElementById('supabaseUrlInput').value.trim();
+      const newKey = document.getElementById('supabaseKeyInput').value.trim();
+      if (!newUrl || !newKey) {
+        alert('Supabase URL ve Anon Key boş bırakılamaz.');
+        return;
+      }
+      localStorage.setItem('11hopem_supabase_url', newUrl);
+      localStorage.setItem('11hopem_supabase_key', newKey);
+      supabase = new SupabaseService({ url: newUrl, key: newKey });
+      window.closeSupabaseSettingsModal();
+      showNotification('✓ Supabase ayarları güncellendi, bağlanılıyor...');
+      loadSupabaseData();
     };
 
     window.exportBackupData = function() {
@@ -834,8 +1045,8 @@
       return (Number(amount) || 0).toLocaleString('tr-TR', { maximumFractionDigits: 0 }) + ' ₺';
     }
 
-    // Initialize
-    window.refreshDashboard();
+    // Connect to Supabase on load
+    loadSupabaseData();
   </script>
 </body>
 </html>

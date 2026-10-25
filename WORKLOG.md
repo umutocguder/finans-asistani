@@ -4,6 +4,37 @@ All architectural milestones, decisions, and feature developments are logged her
 
 ---
 
+### 2026-10-25 21:45 - Supabase Backend Integration & LocalStorage Data Prohibition Compliance
+- **Task & Purpose:** User strictly enforced ecosystem Rule (`kurallar/veri-localstorage-yasagi.md`): "Kalıcı Veri İçin localStorage Kesin Yasağı - Her BE si olan projeye supabase entegresi yap". Eliminated all persistent user financial storage from browser `localStorage` and migrated completely to Supabase PostgreSQL with RLS.
+- **Key Decisions & Architecture:**
+  - Designed and deployed `supabase/schema.sql`:
+    1. `financial_profiles` table: `user_id`, `monthly_net_income`, `monthly_fixed_expenses`, `emergency_fund`, `risk_tolerance`.
+    2. `debts` table: `user_id`, `name`, `debt_type`, `balance`, `min_payment`, `interest_rate_monthly`, `is_closed`.
+    3. `debt_payoff_simulations` table: Stores historical and calculated avalanche/snowball runs.
+    4. `financial_advisor_queries` table: Logs high-level advisory recommendations.
+    5. Row Level Security (RLS) enabled on all 4 tables with public/anon and service policies.
+  - Implemented `src/services/supabaseService.js` PostgREST client:
+    - Provides typed CRUD methods (`getProfile`, `saveProfile`, `getDebts`, `createDebt`, `updateDebt`, `deleteDebt`, `recordSimulation`, `recordAdvisorQuery`).
+    - Explicit network/configuration error feedback without silent local fallbacks.
+  - Updated frontend (`public/index.html` & `index.html`):
+    - Added live Supabase connection status pill (`Supabase PostgreSQL Bağlı`) and Settings Modal.
+    - Synchronized all state changes (debts add/delete, income updates) directly with Supabase.
+  - Added comprehensive test suite in `tests/supabase.test.js`:
+    - 6 unit tests validating PostgREST headers, queries, mutations, upserts, and error handling.
+- **Affected Files:**
+  - `supabase/schema.sql`
+  - `src/services/supabaseService.js`
+  - `tests/supabase.test.js`
+  - `public/index.html`, `index.html`
+  - `scripts/build.js`
+  - `AGENTS.md`, `README.md`, `WORKLOG.md`
+- **Current Status & Verification:**
+  - `npm test`: 13/13 tests passing (100%).
+  - `grep -rn "localStorage\|sessionStorage\|indexedDB" src/`: 0 persistent data violations.
+  - Synchronized and built cleanly via `npm run build`.
+
+---
+
 ### 2026-10-25 21:25 - Initial Genesis & Platform Deployment
 - **Task & Purpose:** User requested a personalized financial strategist and advisor ("borçlarımı ekonomimi sana aktaracağım sen de benim finansörüm olacaksın ne zaman kredi çekicem borçlarımı nasıl kapamam uygun olur neye nasıl yatırım yapmalıyım bana önerilerde bulunacaksın tamam mı bunu projesini olutur").
 - **Key Decisions & Architecture:**

@@ -74,18 +74,22 @@ finans-asistani/
 │   ├── src/                         # Tarayıcı ES Modülleri
 │   ├── robots.txt
 │   └── sitemap.xml
-├── src/                             # Çekirdek Finans Motorları
+├── supabase/                        # Supabase PostgreSQL Şeması & RLS
+│   └── schema.sql                   # financial_profiles, debts, simulations tabloları
+├── src/                             # Çekirdek Finans Motorları & Servisler
 │   ├── engines/
 │   │   ├── debtEngine.js            # Çığ, Kartopu ve Konsolidasyon
 │   │   ├── loanAdvisorEngine.js     # Kredi Zamanlaması ve DTI
 │   │   ├── investmentEngine.js      # Borç vs Yatırım ve Varlık Dağılımı
 │   │   └── financeAdvisorEngine.js  # Yüksek Seviye AI Danışman
 │   ├── services/
+│   │   ├── supabaseService.js       # Supabase PostgreSQL PostgREST İstemcisi
 │   │   └── backupService.js         # SHA-256 Kriptografik Yedekleme
 │   └── telemetry/
 │       └── telemetryService.js      # PII Temizlemeli Firebase REST
 ├── tests/
-│   └── finance.test.js              # %100 Başarılı Birim Testleri
+│   ├── finance.test.js              # Finans Matematik Birim Testleri
+│   └── supabase.test.js             # Supabase Entegrasyon Testleri
 ├── .github/workflows/
 │   └── ci-cd.yml                    # Otonom CI/CD Hattı
 ├── AGENTS.md                        # AI Ajan Standartları
@@ -97,9 +101,9 @@ finans-asistani/
 
 ---
 
-## 🛡️ 6. Sıfır Veri Sızıntısı & Yasal Uyarı
-- **%100 Yerel Veri Saklama:** Kullanıcının gelirleri, borç tutarları ve finansal verileri asla harici bulut sunucularına aktarılmaz. Yalnızca yerel tarayıcı hafızasında saklanır.
-- **Kriptografik Yedekleme:** Tek tıkla JSON formatında indirilen yedekler SHA-256 kriptografik özetiyle doğrulanır.
+## 🛡️ 6. Sıfır Veri Sızıntısı, Supabase Güvenliği & Yasal Uyarı
+- **Supabase PostgreSQL & RLS:** Kullanıcının kalıcı gelirleri, borç tutarları ve finansal verileri tarayıcı önbelleğine (localStorage) emanet edilmez; doğrudan Row Level Security (RLS) korumalı Supabase PostgreSQL veritabanında saklanır.
+- **Kriptografik Yedekleme:** Tek tıkla JSON formatında indirilen yerel kopyalar SHA-256 kriptografik özetiyle doğrulanır.
 - **Yasal Sorumluluk Sınırı:** Bu platform bir bütçe simülasyon ve finansal matematik hesaplama aracıdır; SPK veya BDDK kapsamında yatırım danışmanlığı içermez.
 
 ---
