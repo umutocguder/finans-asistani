@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<!-- Created by 11Hopem -->
+<html lang="tr" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>11Hopem Finansör | Kişisel Finans, Akıllı Borç Kapatma ve Yatırım Asistanı</title>
+  <meta name="description" content="Kişisel finans yönetimi, akıllı borç kapatma stratejileri (Çığ ve Kartopu), kredi çekme zamanlama analizörü ve varlık dağılım simülatörü." />
+  <meta name="author" content="11Hopem" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta property="og:title" content="11Hopem Finansör | Kişisel Finans & Borç Yönetim Asistanı" />
+  <meta property="og:description" content="Ne zaman kredi çekmeli, borçları nasıl kapatmalı ve nasıl yatırım yapmalı? 11Hopem akıllı finans danışmanı." />
+  <meta property="og:image" content="/og-image.png" />
+  <meta property="og:type" content="website" />
+
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ECFDF5',
+              100: '#D1FAE5',
+              500: '#10B981',
+              600: '#059669',
+              700: '#047857',
+            },
+            gold: {
+              400: '#FBBF24',
+              500: '#F59E0B',
+              600: '#D97706',
+            },
+            cyan: {
+              400: '#38BDF8',
+              500: '#06B6D4',
+            },
+            dark: {
+              950: '#04070F',
+              900: '#060B16',
+              850: '#0A1224',
+              800: '#0E1A33',
+              700: '#16284D',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #060B16;
+      color: #F8FAFC;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .glass {
+      background: rgba(10, 18, 36, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+      background: rgba(14, 26, 51, 0.85);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+    .gradient-text-emerald {
+      background: linear-gradient(135deg, #34D399 0%, #06B6D4 50%, #FBBF24 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="border-b border-white/10 bg-dark-900/90 sticky top-0 z-40 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="/logo.svg" alt="11Hopem Finansör Logo" class="w-10 h-10 drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]" />
+        <div>
+          <span class="font-bold text-lg tracking-tight flex items-center gap-2">
+            11Hopem <span class="text-xs px-2.5 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30">Finansör</span>
+          </span>
+          <p class="text-[11px] text-slate-400">Akıllı Borç Kapatma & Finansal Strateji Masası</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-dark-800 border border-white/10 text-xs text-slate-300">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-400"></i> %100 Yerel Kasa & Şifreli Veri
+        </div>
+        <button onclick="exportBackupData()" class="px-3 py-1.5 rounded-lg border border-white/15 hover:border-brand-500/40 text-xs text-slate-300 hover:text-white transition flex items-center gap-1.5">
+          <i data-lucide="download" class="w-3.5 h-3.5 text-brand-400"></i> Yedek İndir
+        </button>
+        <a href="https://11hopem.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-brand-600 to-cyan-500 hover:opacity-95 text-xs font-semibold text-white shadow-md shadow-brand-500/20 transition">
+          11Hopem <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- KPI Overview Strip -->
+  <section class="border-b border-white/5 bg-dark-850/60 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+        
+        <div class="glass p-3.5 rounded-xl">
+          <div class="text-[11px] text-slate-400 font-medium">Aylık Net Gelir</div>
+          <div id="kpiNetIncome" class="text-lg sm:text-xl font-bold text-white mono mt-1">90.000 ₺</div>
+          <div class="text-[10px] text-brand-400 mt-0.5">Düzenli nakit girişi</div>
+        </div>
+
+        <div class="glass p-3.5 rounded-xl">
+          <div class="text-[11px] text-slate-400 font-medium">Sabit Giderler</div>
+          <div id="kpiFixedExpenses" class="text-lg sm:text-xl font-bold text-slate-300 mono mt-1">35.000 ₺</div>
+          <div class="text-[10px] text-slate-400 mt-0.5">Kira, faturalar, mutfak</div>
+        </div>
+
+        <div class="glass p-3.5 rounded-xl border-red-500/20">
+          <div class="text-[11px] text-red-300 font-medium">Toplam Borç Stoğu</div>
+          <div id="kpiTotalDebt" class="text-lg sm:text-xl font-bold text-red-400 mono mt-1">125.000 ₺</div>
+          <div id="kpiDebtCount" class="text-[10px] text-slate-400 mt-0.5">3 aktif borç</div>
+        </div>
+
+        <div class="glass p-3.5 rounded-xl border-amber-500/20">
+          <div class="text-[11px] text-amber-300 font-medium">Aylık Borç Yükü</div>
+          <div id="kpiMonthlyDebtPay" class="text-lg sm:text-xl font-bold text-amber-400 mono mt-1">26.500 ₺</div>
+          <div class="text-[10px] text-slate-400 mt-0.5">Taksit ve asgariler</div>
+        </div>
+
+        <div class="glass p-3.5 rounded-xl border-emerald-500/20">
+          <div class="text-[11px] text-emerald-300 font-medium">Serbest Nakit Akışı</div>
+          <div id="kpiFreeCashflow" class="text-lg sm:text-xl font-bold text-emerald-400 mono mt-1">+28.500 ₺</div>
+          <div class="text-[10px] text-emerald-400/80 mt-0.5">Borç kapama / yatırım payı</div>
+        </div>
+
+        <div class="glass p-3.5 rounded-xl">
+          <div class="text-[11px] text-slate-400 font-medium">Borç / Gelir Oranı (DTI)</div>
+          <div id="kpiDtiRatio" class="text-lg sm:text-xl font-bold text-cyan-400 mono mt-1">%29.4</div>
+          <div id="kpiDtiStatus" class="text-[10px] text-emerald-400 mt-0.5">Sağlıklı seviye</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Navigation Tabs -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+    
+    <!-- Tab Controls -->
+    <div class="flex items-center gap-2 border-b border-white/10 pb-4 mb-8 overflow-x-auto">
+      <button onclick="switchTab('tab-advisor')" id="btn-tab-advisor" class="tab-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-brand-600 text-white shadow-sm shadow-brand-500/25 flex items-center gap-2 whitespace-nowrap">
+        <i data-lucide="bot" class="w-4 h-4"></i> Finansör AI Masası
+      </button>
+      <button onclick="switchTab('tab-debts')" id="btn-tab-debts" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-white glass transition flex items-center gap-2 whitespace-nowrap">
+        <i data-lucide="credit-card" class="w-4 h-4"></i> Borç & Gelir Kütüğü
+      </button>
+      <button onclick="switchTab('tab-payoff')" id="btn-tab-payoff" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-white glass transition flex items-center gap-2 whitespace-nowrap">
+        <i data-lucide="mountain-snow" class="w-4 h-4"></i> Çığ & Kartopu Simülatörü
+      </button>
+      <button onclick="switchTab('tab-loan')" id="btn-tab-loan" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-white glass transition flex items-center gap-2 whitespace-nowrap">
+        <i data-lucide="timer" class="w-4 h-4"></i> Kredi Çekme Zamanlama Analizi
+      </button>
+      <button onclick="switchTab('tab-investment')" id="btn-tab-investment" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-white glass transition flex items-center gap-2 whitespace-nowrap">
+        <i data-lucide="trending-up" class="w-4 h-4"></i> Varlık & Yatırım Dağılımı
+      </button>
+    </div>
+
+    <!-- TAB 1: FINANSÖR AI MASASI -->
+    <div id="tab-advisor" class="tab-content space-y-6">
+      
+      <!-- Quick Prompt Pills -->
+      <div class="glass p-5 rounded-2xl">
+        <h3 class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-3 flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-4 h-4 text-brand-400"></i> Hızlı Finansal Karar Soruları (Tek Tıkla Sor)
+        </h3>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="askPrompt('Ne zaman kredi çekmeliyim? Şu an kredi çekmek uygun mu?')" class="px-3.5 py-2 rounded-xl bg-dark-800 hover:bg-dark-700 border border-white/10 text-xs text-slate-200 transition flex items-center gap-1.5">
+            ⏱️ Ne zaman kredi çekmeliyim?
+          </button>
+          <button onclick="askPrompt('Borçlarımı en az faiz ödeyerek nasıl kapatmalıyım?')" class="px-3.5 py-2 rounded-xl bg-dark-800 hover:bg-dark-700 border border-white/10 text-xs text-slate-200 transition flex items-center gap-1.5">
+            🏔️ Borçlarımı nasıl kapatayım?
+          </button>
+          <button onclick="askPrompt('Şu an elime 50.000 TL geçti. Borç mu kapatayım yoksa altına mı yatırayım?')" class="px-3.5 py-2 rounded-xl bg-dark-800 hover:bg-dark-700 border border-white/10 text-xs text-slate-200 transition flex items-center gap-1.5">
+            💰 50.000 ₺ nakit fazlam var, nereye koymalıyım?
+          </button>
+          <button onclick="askPrompt('Neye ve nasıl yatırım yapmalıyım? Portföyüm nasıl olmalı?')" class="px-3.5 py-2 rounded-xl bg-dark-800 hover:bg-dark-700 border border-white/10 text-xs text-slate-200 transition flex items-center gap-1.5">
+            📈 Neye nasıl yatırım yapmalıyım?
+          </button>
+        </div>
+
+        <!-- Custom Prompt Input -->
+        <div class="mt-4 flex gap-2">
+          <input 
+            type="text" 
+            id="advisorInput" 
+            placeholder="Finansörüne sor: Örneğin 'Bu ay borç kapatma kredisi çekmeli miyim?'..." 
+            class="flex-grow px-4 py-2.5 bg-dark-900 border border-white/10 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition"
+            onkeydown="if(event.key === 'Enter') submitAdvisorQuestion()"
+          />
+          <button onclick="submitAdvisorQuestion()" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-xs sm:text-sm font-semibold text-white transition flex items-center gap-2">
+            Analiz Et <i data-lucide="send" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Advisory Response Display -->
+      <div id="advisorOutputBox" class="glass-card p-6 sm:p-8 rounded-2xl relative overflow-hidden">
+        <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
+              <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 id="advisorTitle" class="font-bold text-white text-base">Finansör Teşhis Raporu & Stratejik Yol Haritası</h4>
+              <p class="text-xs text-slate-400">Matematiksel Faiz & Nakit Akışı Modeli Analizi</p>
+            </div>
+          </div>
+          <span id="advisorBadge" class="text-xs px-2.5 py-1 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30 font-medium">Aktif Tavsiye</span>
+        </div>
+
+        <div id="advisorBody" class="text-sm text-slate-300 leading-relaxed space-y-4">
+          <!-- Dynamic advice inject -->
+        </div>
+
+        <!-- Action Plan Roadmap -->
+        <div class="mt-6 pt-6 border-t border-white/10">
+          <h5 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+            <i data-lucide="list-ordered" class="w-4 h-4 text-cyan-400"></i> Öncelikli Eylem Planı (Adım Adım)
+          </h5>
+          <div id="advisorActionPlan" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <!-- Dynamic Action Steps -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 2: GELİR & BORÇ LİSTESİ -->
+    <div id="tab-debts" class="tab-content hidden space-y-6">
+      
+      <!-- Income & Fixed Expenses Form -->
+      <div class="glass p-6 rounded-2xl">
+        <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+          <i data-lucide="wallet" class="w-4 h-4 text-brand-400"></i> Aylık Temel Bütçe Parametreleri
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Aylık Net Gelir (Maaş / Kazanç ₺)</label>
+            <input type="number" id="inputNetIncome" value="90000" onchange="updateProfileData()" class="w-full px-3 py-2 bg-dark-900 border border-white/10 rounded-xl text-sm text-white font-mono focus:border-brand-500" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Aylık Sabit Yaşam Gideri (Kira, Fatura vb. ₺)</label>
+            <input type="number" id="inputFixedExpenses" value="35000" onchange="updateProfileData()" class="w-full px-3 py-2 bg-dark-900 border border-white/10 rounded-xl text-sm text-white font-mono focus:border-brand-500" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Mevcut Acil Durum / Likit Fon (₺)</label>
+            <input type="number" id="inputEmergencyFund" value="40000" onchange="updateProfileData()" class="w-full px-3 py-2 bg-dark-900 border border-white/10 rounded-xl text-sm text-white font-mono focus:border-brand-500" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Debt List Table -->
+      <div class="glass p-6 rounded-2xl">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="receipt" class="w-4 h-4 text-red-400"></i> Aktif Borçlar ve Krediler
+            </h3>
+            <p class="text-xs text-slate-400">Kredi kartı, KMH, tüketici kredisi ve şahsi borçlarınızı listeleyin.</p>
+          </div>
+          <button onclick="openAddDebtModal()" class="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-xs font-semibold text-white transition flex items-center gap-1.5">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Yeni Borç Ekle
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-dark-900 text-slate-400 border-b border-white/10">
+              <tr>
+                <th class="p-3">Borç Tanımı</th>
+                <th class="p-3">Tür</th>
+                <th class="p-3">Kalan Bakiye (₺)</th>
+                <th class="p-3">Aylık Asgari / Taksit (₺)</th>
+                <th class="p-3">Aylık Faiz Oranı (%)</th>
+                <th class="p-3">Yıllık Bileşik Yaklaşık</th>
+                <th class="p-3 text-right">İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="debtsTableBody" class="divide-y divide-white/5 text-slate-200">
+              <!-- Injected by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 3: ÇIĞ & KARTOPU SİMÜLATÖRÜ -->
+    <div id="tab-payoff" class="tab-content hidden space-y-6">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Avalanche Card -->
+        <div class="glass-card p-6 rounded-2xl border-cyan-500/30">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">🏔️</span>
+              <h4 class="font-bold text-white text-base">Çığ Yöntemi (Avalanche)</h4>
+            </div>
+            <span class="text-[11px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-semibold">Matematiksel En Düşük Faiz</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-4">
+            En yüksek faiz oranına sahip borcu (KMH, Kredi Kartı) ilk sıraya alarak toplamda en az faizi ödemenizi sağlayan rasyonel strateji.
+          </p>
+
+          <div class="grid grid-cols-2 gap-3 bg-dark-900/60 p-3.5 rounded-xl border border-white/5 mb-4 text-center">
+            <div>
+              <div class="text-[11px] text-slate-400">Borcun Kapanma Süresi</div>
+              <div id="avalancheMonths" class="text-lg font-bold text-cyan-400 mono mt-0.5">8 Ay</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400">Ödenecek Toplam Faiz</div>
+              <div id="avalancheInterest" class="text-lg font-bold text-white mono mt-0.5">14.280 ₺</div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-300 font-semibold mb-2">Ödeme Sıralaması:</div>
+          <ol id="avalancheOrder" class="list-decimal list-inside space-y-1 text-xs text-slate-400"></ol>
+        </div>
+
+        <!-- Snowball Card -->
+        <div class="glass-card p-6 rounded-2xl border-brand-500/30">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">⛄</span>
+              <h4 class="font-bold text-white text-base">Kartopu Yöntemi (Snowball)</h4>
+            </div>
+            <span class="text-[11px] px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 font-semibold">Psikolojik Zafer Odaklı</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-4">
+            En düşük bakiyeli borcu ilk sıraya alıp hemen kapatarak borç sayısını azaltan ve motivasyon sağlayan davranışsal strateji.
+          </p>
+
+          <div class="grid grid-cols-2 gap-3 bg-dark-900/60 p-3.5 rounded-xl border border-white/5 mb-4 text-center">
+            <div>
+              <div class="text-[11px] text-slate-400">Borcun Kapanma Süresi</div>
+              <div id="snowballMonths" class="text-lg font-bold text-brand-400 mono mt-0.5">9 Ay</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400">Ödenecek Toplam Faiz</div>
+              <div id="snowballInterest" class="text-lg font-bold text-white mono mt-0.5">16.450 ₺</div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-300 font-semibold mb-2">Ödeme Sıralaması:</div>
+          <ol id="snowballOrder" class="list-decimal list-inside space-y-1 text-xs text-slate-400"></ol>
+        </div>
+
+      </div>
+
+      <!-- Debt Consolidation Engine Card -->
+      <div class="glass p-6 rounded-2xl border-amber-500/20">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="merge" class="w-5 h-5 text-amber-400"></i>
+            <h4 class="font-bold text-white text-base">Kredi Birleştirme (Borç Konsolidasyonu) Fırsat Analizi</h4>
+          </div>
+          <span id="consolidationBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-semibold">Fırsat İnceleniyor</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-4">
+          Dağınık kredi kartları ve KMH borçlarını tek bir düşük faizli tüketici kredisinde toplamanın avantajı hesaplanır.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-dark-900/70 p-4 rounded-xl border border-white/5 text-center">
+          <div>
+            <div class="text-[11px] text-slate-400">Toplam Kapatılacak Borç</div>
+            <div id="consTotalDebt" class="text-base font-bold text-white mono mt-1">125.000 ₺</div>
+          </div>
+          <div>
+            <div class="text-[11px] text-slate-400">Şimdiki Aylık Asgari Yük</div>
+            <div id="consOldMonthly" class="text-base font-bold text-red-400 mono mt-1">26.500 ₺</div>
+          </div>
+          <div>
+            <div class="text-[11px] text-slate-400">Konsolidasyon Kredisi Taksiti (24 Ay)</div>
+            <div id="consNewMonthly" class="text-base font-bold text-brand-400 mono mt-1">8.150 ₺</div>
+          </div>
+          <div>
+            <div class="text-[11px] text-slate-400">Aylık Nakit Rahatlaması</div>
+            <div id="consCashRelief" class="text-base font-bold text-cyan-400 mono mt-1">+18.350 ₺ / Ay</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 4: KREDİ ÇEKME ZAMANLAMA ANALİZİ -->
+    <div id="tab-loan" class="tab-content hidden space-y-6">
+      
+      <div class="glass p-6 sm:p-8 rounded-2xl">
+        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+          <i data-lucide="calendar-clock" class="w-5 h-5 text-cyan-400"></i> Ne Zaman Kredi Çekmeliyim? Kredi Uygunluk Testi
+        </h3>
+        <p class="text-xs text-slate-400 mb-6">
+          Kredi çekmeden önce borç/gelir oranınızı, nakit akışınızı ve kredinin amacını simüle edin.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Çekilmek İstenen Kredi Tutarı (₺)</label>
+            <input type="number" id="testLoanAmount" value="50000" onchange="runLoanTimingTest()" class="w-full px-3 py-2 bg-dark-900 border border-white/10 rounded-xl text-sm text-white font-mono" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Aylık Kredi Taksiti (₺)</label>
+            <input type="number" id="testLoanPayment" value="3800" onchange="runLoanTimingTest()" class="w-full px-3 py-2 bg-dark-900 border border-white/10 rounded-xl text-sm text-white font-mono" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Kredinin Çekilme Amacı</label>
+            <select id="testLoanPurpose" onchange="runLoanTimingTest()" class="w-full px-3 py-2 bg-dark-900 border border-white/10 rounded-xl text-xs sm:text-sm text-white">
+              <option value="DEBT_CONSOLIDATION">Borç Kapatma / Konsolidasyon</option>
+              <option value="INVESTMENT">Gelir Getiren Yatırım / Ticari</option>
+              <option value="EMERGENCY">Zorunlu Acil Sağlık / Durum</option>
+              <option value="CONSUMPTION">Tüketim / Tatil / Lüks Harcama</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Decision Box -->
+        <div id="loanDecisionBox" class="p-6 rounded-2xl bg-dark-900 border border-white/10">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2.5">
+              <span id="loanDecisionIcon" class="text-2xl">⏳</span>
+              <div>
+                <h4 id="loanDecisionTitle" class="font-bold text-white text-base">Analiz Ediliyor</h4>
+                <p id="loanDecisionSub" class="text-xs text-slate-400"></p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-[11px] text-slate-400">Finansal Sağlık Skoru</div>
+              <div id="loanHealthScore" class="text-2xl font-bold text-cyan-400 mono">85 / 100</div>
+            </div>
+          </div>
+
+          <div id="loanRuleDetails" class="space-y-2 text-xs text-slate-300">
+            <!-- Rules injected by JS -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 5: VARLIK & YATIRIM DAĞILIMI -->
+    <div id="tab-investment" class="tab-content hidden space-y-6">
+      
+      <!-- Priority Rule Box -->
+      <div id="investmentPriorityBox" class="glass-card p-6 rounded-2xl border-brand-500/30">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
+            <i data-lucide="scale" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h4 id="investPriorityTitle" class="font-bold text-white text-base">Borç Kapatma vs Yatırım Önceliği</h4>
+            <p id="investPrioritySub" class="text-xs text-brand-300"></p>
+          </div>
+        </div>
+        <p id="investPriorityText" class="text-xs sm:text-sm text-slate-300 leading-relaxed"></p>
+      </div>
+
+      <!-- Asset Allocation Model -->
+      <div class="glass p-6 rounded-2xl">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-cyan-400"></i> Önerilen Varlık Dağılım Modeli
+            </h3>
+            <p class="text-xs text-slate-400">Risk profilinize ve mevcut borç durumunuza göre ideal portföy dağılımı.</p>
+          </div>
+          <select id="selectRiskProfile" onchange="updateInvestmentAllocations()" class="px-3 py-1.5 bg-dark-900 border border-white/10 rounded-xl text-xs text-white">
+            <option value="CONSERVATIVE">Muhafazakar (Altın & PPF Ağırlıklı)</option>
+            <option value="BALANCED" selected>Dengeli (Altın + Hisse + PPF)</option>
+            <option value="GROWTH">Büyüme Odaklı (Hisse & Teknoloji Fonları)</option>
+          </select>
+        </div>
+
+        <div id="allocationBars" class="space-y-3">
+          <!-- Allocation bars injected by JS -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Add Debt Modal -->
+  <div id="addDebtModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card p-6 sm:p-8 rounded-2xl max-w-md w-full bg-dark-900 relative">
+      <button onclick="closeAddDebtModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+        <i data-lucide="plus-circle" class="w-5 h-5 text-brand-400"></i> Yeni Borç / Kredi Ekle
+      </h3>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">Borç Adı / Kurum</label>
+          <input type="text" id="newDebtName" placeholder="Örn: Garanti Kredi Kartı" class="w-full px-3 py-2 bg-dark-850 border border-white/10 rounded-xl text-white focus:border-brand-500" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Borç Türü</label>
+          <select id="newDebtType" class="w-full px-3 py-2 bg-dark-850 border border-white/10 rounded-xl text-white">
+            <option value="credit_card">Kredi Kartı</option>
+            <option value="kmh">KMH / Artı Para / Ek Hesap</option>
+            <option value="consumer_loan">İhtiyaç / Tüketici Kredisi</option>
+            <option value="personal">Şahsi / Elden Borç</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Kalan Bakiye (₺)</label>
+          <input type="number" id="newDebtBalance" placeholder="Örn: 25000" class="w-full px-3 py-2 bg-dark-850 border border-white/10 rounded-xl text-white font-mono" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Aylık Asgari / Taksit Tutarı (₺)</label>
+          <input type="number" id="newDebtMinPayment" placeholder="Örn: 5000" class="w-full px-3 py-2 bg-dark-850 border border-white/10 rounded-xl text-white font-mono" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Aylık Akdi Faiz Oranı (%)</label>
+          <input type="number" step="0.1" id="newDebtRate" placeholder="Örn: 4.5" value="4.5" class="w-full px-3 py-2 bg-dark-850 border border-white/10 rounded-xl text-white font-mono" />
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-2">
+        <button onclick="closeAddDebtModal()" class="px-4 py-2 rounded-xl border border-white/10 text-xs text-slate-300 hover:text-white">İptal</button>
+        <button onclick="saveNewDebt()" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-xs font-semibold text-white">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/10 bg-dark-900 py-8 text-xs text-slate-400 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        Created by <a href="https://11hopem.com" target="_blank" rel="noopener noreferrer" class="text-white hover:text-brand-400 font-semibold transition">11Hopem</a>. All rights reserved.
+      </div>
+      <div class="text-[11px] text-slate-500">
+        Bu platform bütçe simülasyon ve finansal matematik aracıdır. SPK yatırım danışmanlığı içermez.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Logic (ES Modules) -->
+  <script type="module">
+    import { DebtEngine } from './src/engines/debtEngine.js';
+    import { LoanAdvisorEngine } from './src/engines/loanAdvisorEngine.js';
+    import { InvestmentEngine } from './src/engines/investmentEngine.js';
+    import { FinanceAdvisorEngine } from './src/engines/financeAdvisorEngine.js';
+
+    // State
+    let profile = {
+      monthlyNetIncome: 90000,
+      monthlyFixedExpenses: 35000,
+      emergencyFund: 40000,
+      riskTolerance: 'BALANCED',
+      debts: [
+        { id: '1', name: 'Kredi Kartı A', type: 'credit_card', balance: 30000, minPayment: 6000, interestRateMonthly: 4.5 },
+        { id: '2', name: 'İhtiyaç Kredisi', type: 'consumer_loan', balance: 80000, minPayment: 5500, interestRateMonthly: 3.1 },
+        { id: '3', name: 'KMH / Ek Hesap', type: 'kmh', balance: 15000, minPayment: 15000, interestRateMonthly: 5.0 }
+      ]
+    };
+
+    // Load from local storage if available
+    const saved = localStorage.getItem('11hopem_finansor_state');
+    if (saved) {
+      try { profile = JSON.parse(saved); } catch(e) {}
+    }
+
+    function saveState() {
+      localStorage.setItem('11hopem_finansor_state', JSON.stringify(profile));
+    }
+
+    // Refresh everything
+    window.refreshDashboard = function() {
+      saveState();
+      const report = FinanceAdvisorEngine.generateFinancialHealthReport(profile);
+      const { summary, strategies, investmentRecommendation, actionPlan } = report;
+
+      // KPIs
+      document.getElementById('kpiNetIncome').textContent = formatMoney(summary.monthlyNetIncome);
+      document.getElementById('kpiFixedExpenses').textContent = formatMoney(summary.monthlyFixedExpenses);
+      document.getElementById('kpiTotalDebt').textContent = formatMoney(summary.totalDebtBalance);
+      document.getElementById('kpiDebtCount').textContent = `${profile.debts.length} aktif borç`;
+      document.getElementById('kpiMonthlyDebtPay').textContent = formatMoney(summary.totalMonthlyDebtPayments);
+      
+      const freeSign = summary.freeCashflow >= 0 ? '+' : '';
+      document.getElementById('kpiFreeCashflow').textContent = `${freeSign}${formatMoney(summary.freeCashflow)}`;
+      document.getElementById('kpiFreeCashflow').className = summary.freeCashflow >= 0 ? 'text-lg sm:text-xl font-bold text-emerald-400 mono mt-1' : 'text-lg sm:text-xl font-bold text-red-400 mono mt-1';
+
+      document.getElementById('kpiDtiRatio').textContent = `%${summary.dtiPercent}`;
+      document.getElementById('kpiDtiStatus').textContent = summary.dtiLabel;
+      document.getElementById('kpiDtiStatus').className = summary.dtiTier === 'HEALTHY' ? 'text-[10px] text-emerald-400 mt-0.5' : (summary.dtiTier === 'MODERATE' ? 'text-[10px] text-amber-400 mt-0.5' : 'text-[10px] text-red-400 mt-0.5');
+
+      // Debts Table
+      renderDebtsTable();
+
+      // Avalanche & Snowball
+      document.getElementById('avalancheMonths').textContent = `${strategies.avalanche.totalMonths} Ay`;
+      document.getElementById('avalancheInterest').textContent = `${formatMoney(strategies.avalanche.totalInterestPaid)}`;
+      document.getElementById('avalancheOrder').innerHTML = strategies.avalanche.priorityOrder.map(name => `<li>${name}</li>`).join('');
+
+      document.getElementById('snowballMonths').textContent = `${strategies.snowball.totalMonths} Ay`;
+      document.getElementById('snowballInterest').textContent = `${formatMoney(strategies.snowball.totalInterestPaid)}`;
+      document.getElementById('snowballOrder').innerHTML = strategies.snowball.priorityOrder.map(name => `<li>${name}</li>`).join('');
+
+      // Consolidation
+      document.getElementById('consTotalDebt').textContent = formatMoney(strategies.consolidation.totalDebtToConsolidate);
+      document.getElementById('consOldMonthly').textContent = formatMoney(strategies.consolidation.currentMonthlyBurden);
+      document.getElementById('consNewMonthly').textContent = formatMoney(strategies.consolidation.newMonthlyPayment);
+      document.getElementById('consCashRelief').textContent = `+${formatMoney(strategies.consolidation.monthlyBurdenReduction)} / Ay`;
+      document.getElementById('consolidationBadge').textContent = strategies.consolidation.isBeneficial ? '✓ Refinansman Mantıklı' : 'X Gerek Yok';
+      document.getElementById('consolidationBadge').className = strategies.consolidation.isBeneficial ? 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold' : 'text-xs px-2.5 py-0.5 rounded-full bg-slate-500/20 text-slate-300 font-semibold';
+
+      // Investment Priority & Allocation
+      document.getElementById('investPriorityTitle').textContent = investmentRecommendation.debtVsInvest.action;
+      document.getElementById('investPrioritySub').textContent = `Faiz Farkı: %${investmentRecommendation.debtVsInvest.rateSpread}`;
+      document.getElementById('investPriorityText').textContent = investmentRecommendation.debtVsInvest.explanation;
+
+      renderAllocationBars(investmentRecommendation.assetAllocation.allocations);
+
+      // Advisor tab default output
+      renderAdvisorAdvice(FinanceAdvisorEngine.answerUserQuery('genel durum', profile));
+
+      // Loan timing test
+      window.runLoanTimingTest();
+
+      lucide.createIcons();
+    };
+
+    function renderDebtsTable() {
+      const tbody = document.getElementById('debtsTableBody');
+      if (profile.debts.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500">Tebrikler, kayıtlı hiçbir borcunuz bulunmuyor!</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = profile.debts.map((d, index) => {
+        const annualRate = Math.round(Number(d.interestRateMonthly) * 12 * 1.35 * 10) / 10;
+        const typeLabels = {
+          credit_card: 'Kredi Kartı',
+          kmh: 'KMH / Ek Hesap',
+          consumer_loan: 'Tüketici Kredisi',
+          personal: 'Şahsi Borç'
+        };
+
+        return `
+          <tr class="hover:bg-white/5 transition">
+            <td class="p-3 font-semibold text-white">${d.name}</td>
+            <td class="p-3 text-slate-400">${typeLabels[d.type] || d.type}</td>
+            <td class="p-3 font-mono font-bold text-red-400">${formatMoney(d.balance)}</td>
+            <td class="p-3 font-mono text-slate-300">${formatMoney(d.minPayment)}</td>
+            <td class="p-3 font-mono text-amber-400 font-semibold">%${d.interestRateMonthly}</td>
+            <td class="p-3 font-mono text-slate-400">~%${annualRate}</td>
+            <td class="p-3 text-right">
+              <button onclick="deleteDebt(${index})" class="text-red-400 hover:text-red-300 p-1 rounded transition">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderAllocationBars(allocations) {
+      const container = document.getElementById('allocationBars');
+      container.innerHTML = allocations.map(item => `
+        <div>
+          <div class="flex items-center justify-between text-xs mb-1">
+            <span class="font-medium text-slate-200 flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${item.color}"></span>
+              ${item.asset}
+            </span>
+            <span class="font-mono font-bold text-white">%${item.percent}</span>
+          </div>
+          <div class="w-full h-2.5 bg-dark-900 rounded-full overflow-hidden border border-white/5">
+            <div class="h-full rounded-full transition-all duration-500" style="width: ${item.percent}%; background-color: ${item.color}"></div>
+          </div>
+          <div class="text-[10px] text-slate-400 mt-0.5">${item.description}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderAdvisorAdvice(res) {
+      document.getElementById('advisorTitle').textContent = res.title;
+      document.getElementById('advisorBody').innerHTML = `<p class="leading-relaxed text-sm text-slate-200">${res.advice}</p>`;
+      
+      const report = FinanceAdvisorEngine.generateFinancialHealthReport(profile);
+      const planContainer = document.getElementById('advisorActionPlan');
+      planContainer.innerHTML = report.actionPlan.map(item => `
+        <div class="p-3.5 rounded-xl bg-dark-900 border border-white/5 flex items-start gap-3">
+          <div class="w-6 h-6 rounded-full bg-brand-500/20 text-brand-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 mono">
+            ${item.priority}
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs font-bold text-white">${item.title}</span>
+              <span class="text-[10px] px-2 py-0.2 rounded-full bg-white/5 text-cyan-300 border border-white/10">${item.badge}</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">${item.desc}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.askPrompt = function(query) {
+      document.getElementById('advisorInput').value = query;
+      window.submitAdvisorQuestion();
+    };
+
+    window.submitAdvisorQuestion = function() {
+      const q = document.getElementById('advisorInput').value;
+      if (!q) return;
+      const ans = FinanceAdvisorEngine.answerUserQuery(q, profile);
+      renderAdvisorAdvice(ans);
+    };
+
+    window.runLoanTimingTest = function() {
+      const amount = Number(document.getElementById('testLoanAmount').value || 50000);
+      const payment = Number(document.getElementById('testLoanPayment').value || 3800);
+      const purpose = document.getElementById('testLoanPurpose').value;
+
+      const currentDebtPayments = profile.debts.reduce((sum, d) => sum + Number(d.minPayment), 0);
+      const result = LoanAdvisorEngine.evaluateLoanTiming({
+        monthlyNetIncome: profile.monthlyNetIncome,
+        monthlyFixedExpenses: profile.monthlyFixedExpenses,
+        currentMonthlyDebtPayments: currentDebtPayments,
+        emergencyFundBalance: profile.emergencyFund,
+        loanPurpose: purpose,
+        proposedMonthlyPayment: payment
+      });
+
+      document.getElementById('loanDecisionTitle').textContent = result.recommendation;
+      document.getElementById('loanDecisionSub').textContent = result.shouldBorrow ? 'Finansal kriterler olumlu; taksit bütçenizi zorlamıyor.' : 'Bu koşullarda yeni kredi çekmek finansal risk doğuracaktır.';
+      document.getElementById('loanDecisionIcon').textContent = result.shouldBorrow ? '✅' : '🛑';
+      document.getElementById('loanHealthScore').textContent = `${result.healthScore} / 100`;
+      document.getElementById('loanHealthScore').className = result.healthScore >= 65 ? 'text-2xl font-bold text-emerald-400 mono' : 'text-2xl font-bold text-red-400 mono';
+
+      document.getElementById('loanRuleDetails').innerHTML = result.rules.map(r => `
+        <div class="flex items-center gap-2 p-2 rounded-lg ${r.status === 'DANGER' ? 'bg-red-500/10 text-red-300 border border-red-500/20' : (r.status === 'WARNING' ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20' : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20')}">
+          <span>${r.status === 'DANGER' ? '❌' : (r.status === 'WARNING' ? '⚠️' : '✓')}</span>
+          <span>${r.message}</span>
+        </div>
+      `).join('');
+    };
+
+    window.updateProfileData = function() {
+      profile.monthlyNetIncome = Number(document.getElementById('inputNetIncome').value || 0);
+      profile.monthlyFixedExpenses = Number(document.getElementById('inputFixedExpenses').value || 0);
+      profile.emergencyFund = Number(document.getElementById('inputEmergencyFund').value || 0);
+      window.refreshDashboard();
+    };
+
+    window.updateInvestmentAllocations = function() {
+      profile.riskTolerance = document.getElementById('selectRiskProfile').value;
+      window.refreshDashboard();
+    };
+
+    window.deleteDebt = function(index) {
+      profile.debts.splice(index, 1);
+      window.refreshDashboard();
+    };
+
+    window.openAddDebtModal = function() {
+      document.getElementById('addDebtModal').classList.remove('hidden');
+    };
+
+    window.closeAddDebtModal = function() {
+      document.getElementById('addDebtModal').classList.add('hidden');
+    };
+
+    window.saveNewDebt = function() {
+      const name = document.getElementById('newDebtName').value;
+      const type = document.getElementById('newDebtType').value;
+      const balance = Number(document.getElementById('newDebtBalance').value || 0);
+      const minPayment = Number(document.getElementById('newDebtMinPayment').value || 0);
+      const rate = Number(document.getElementById('newDebtRate').value || 4.5);
+
+      if (!name || balance <= 0) {
+        alert('Lütfen geçerli bir borç adı ve bakiye giriniz.');
+        return;
+      }
+
+      profile.debts.push({
+        id: String(Date.now()),
+        name,
+        type,
+        balance,
+        minPayment,
+        interestRateMonthly: rate
+      });
+
+      window.closeAddDebtModal();
+      document.getElementById('newDebtName').value = '';
+      document.getElementById('newDebtBalance').value = '';
+      document.getElementById('newDebtMinPayment').value = '';
+      window.refreshDashboard();
+    };
+
+    window.exportBackupData = function() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(profile, null, 2));
+      const dlAnchorElem = document.createElement('a');
+      dlAnchorElem.setAttribute("href", dataStr);
+      dlAnchorElem.setAttribute("download", `11hopem-finans-yedek-${new Date().toISOString().slice(0,10)}.json`);
+      dlAnchorElem.click();
+    };
+
+    window.switchTab = function(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = "tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-white glass transition flex items-center gap-2 whitespace-nowrap";
+      });
+      document.getElementById(`btn-${tabId}`).className = "tab-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-brand-600 text-white shadow-sm shadow-brand-500/25 flex items-center gap-2 whitespace-nowrap";
+    };
+
+    function formatMoney(amount) {
+      return (Number(amount) || 0).toLocaleString('tr-TR', { maximumFractionDigits: 0 }) + ' ₺';
+    }
+
+    // Initialize
+    window.refreshDashboard();
+  </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#060B16"/>
+      <stop offset="50%" stop-color="#0B1528"/>
+      <stop offset="100%" stop-color="#04070F"/>
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="50%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Shield Rounded Rect -->
+  <rect width="512" height="512" rx="108" fill="url(#bgGrad)"/>
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="none" stroke="url(#emeraldGrad)" stroke-width="3" stroke-opacity="0.3"/>
+
+  <!-- Geometric Vault & Shield Core -->
+  <path d="M 256 70 L 396 130 L 396 270 C 396 360 256 430 256 430 C 256 430 116 360 116 270 L 116 130 Z" 
+        fill="#0D1A30" stroke="url(#cyanGrad)" stroke-width="4" stroke-opacity="0.5"/>
+
+  <!-- Financial Exponential Growth Wave -->
+  <path d="M 146 320 C 196 320 226 270 276 220 C 316 180 346 160 386 150" 
+        fill="none" stroke="url(#emeraldGrad)" stroke-width="12" stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- Upward Arrow Head -->
+  <polygon points="386,130 396,165 365,160" fill="url(#emeraldGrad)"/>
+
+  <!-- Vault Keyhole & Gold Core Pillars (11Hopem Signature) -->
+  <rect x="232" y="190" width="16" height="80" rx="8" fill="url(#goldGrad)" filter="url(#glow)"/>
+  <rect x="264" y="190" width="16" height="80" rx="8" fill="url(#goldGrad)" filter="url(#glow)"/>
+  <circle cx="256" cy="180" r="28" fill="none" stroke="url(#goldGrad)" stroke-width="10"/>
+
+  <!-- Subtitle Text -->
+  <text x="256" y="474" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#94A3B8" letter-spacing="4">11HOPEM FINANS</text>
+</svg>

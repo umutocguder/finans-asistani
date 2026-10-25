@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://finans-asistani.vercel.app/sitemap.xml
