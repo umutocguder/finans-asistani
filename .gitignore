@@ -22,3 +22,12 @@ secrets.plist
 *.keystore
 id_rsa*
 id_ed25519*
+
+# Internal AI context & prompt files
+AGENTS.md
+CLAUDE.md
+WORKLOG.md
+.cursorrules
+.clinerules
+*.agent.md
+
