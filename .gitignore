@@ -31,3 +31,6 @@ WORKLOG.md
 .clinerules
 *.agent.md
 
+
+# graphify generated knowledge graph
+graphify-out/
